@@ -11,7 +11,7 @@
 <style>
   html, body { margin: 0; height: 100%; background: #fff; overflow: hidden; }
   body { display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: system-ui, sans-serif; }
-  .stage { position: relative; width: min(94vw, 1150px, calc(80vh * 1757 / 1043)); aspect-ratio: 1757 / 1043; perspective: 1400px; }
+  .stage { position: relative; width: min(94vw, 1150px, calc(76vh * 1757 / 1043)); aspect-ratio: 1757 / 1043; perspective: 1400px; }
   .stage img { position: absolute; display: block; opacity: 0; will-change: transform, opacity, filter; transform-origin: 50% 50%; }
   .burst { position: absolute; border-radius: 50%; pointer-events: none; opacity: 0;
            background: radial-gradient(circle, rgba(255,255,255,.95) 0%, rgba(170,120,255,.85) 25%, rgba(110,60,220,.35) 55%, rgba(110,60,220,0) 72%); }
@@ -35,14 +35,19 @@
   #replay:hover .tip, #replay:focus-visible .tip { opacity: 1; }
   @keyframes glow { 0% { fill: #fff8d6; } 30% { fill: #ffd83a; filter: drop-shadow(0 0 14px rgba(255,200,40,1)); } 100% { fill: #fff8d6; } }
   .final img { opacity: 1 !important; }
-  .tagline { margin: clamp(4px, 1.5vh, 18px) 0 0; font: italic 500 clamp(18px, 3.2vw, 34px)/1.2 "Playfair Display", Georgia, serif;
-             color: #3a3150; letter-spacing: .01em; text-align: center; padding: 0 16px; opacity: 0; }
+  .tagline { margin: clamp(4px, 1.4vh, 16px) 0 0; padding: 0 16px; text-align: center; opacity: 0; max-width: 1000px; }
+  .tagline .hook { margin: 0; font: italic 500 clamp(17px, 2.5vw, 30px)/1.25 "Playfair Display", Georgia, serif; color: #3a3150; text-wrap: balance; }
+  .tagline .sub { margin: .45em 0 0; font: 500 clamp(13px, 1.45vw, 17px)/1.4 system-ui, -apple-system, "Segoe UI", sans-serif;
+                  color: #6b6478; letter-spacing: .02em; text-wrap: balance; }
   .final .tagline, .tagline.final { opacity: 1; }
 </style>
 </head>
 <body>
 <div class="stage" id="stage" role="img" aria-label="Jazzy Ideas — jazzyideas.com"></div>
-<h1 class="tagline" id="tagline">Where great concepts connect partners</h1>
+<div class="tagline" id="tagline">
+  <h1 class="hook">Go from singing in the shower to delivering music to your customers&#8217; ears.</h1>
+  <p class="sub">AI, web, and marketing expertise that sets the standard.</p>
+</div>
 <button id="replay" type="button" aria-label="Play the animation again" title="Play again">
   <span class="tip">Play again</span>
   <svg viewBox="0 0 60 78" aria-hidden="true">
