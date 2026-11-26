@@ -5,14 +5,231 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Jazzy Ideas</title>
 <meta name="description" content="Jazzy Ideas">
-<link rel="icon" href="logo-v3.jpg">
+<link rel="icon" href="sax.webp">
 <style>
-  html, body { margin: 0; height: 100%; background: #fff; }
-  body { display: flex; align-items: center; justify-content: center; }
-  img { width: min(92vw, 1100px); height: auto; display: block; }
+  html, body { margin: 0; height: 100%; background: #fff; overflow: hidden; }
+  body { display: flex; align-items: center; justify-content: center; font-family: system-ui, sans-serif; }
+  .stage { position: relative; width: min(94vw, 1150px, calc(92vh * 1757 / 1043)); aspect-ratio: 1757 / 1043; perspective: 1400px; }
+  .stage img { position: absolute; display: block; opacity: 0; will-change: transform, opacity, filter; transform-origin: 50% 50%; }
+  .burst { position: absolute; border-radius: 50%; pointer-events: none; opacity: 0;
+           background: radial-gradient(circle, rgba(255,255,255,.95) 0%, rgba(170,120,255,.85) 25%, rgba(110,60,220,.35) 55%, rgba(110,60,220,0) 72%); }
+  .spark { position: absolute; width: 1.1%; aspect-ratio: 1; pointer-events: none; opacity: 0;
+           background: radial-gradient(circle, #fff 0%, #c9a6ff 40%, rgba(150,90,255,0) 70%); border-radius: 50%; }
+  .shine { position: absolute; pointer-events: none; opacity: 0; mix-blend-mode: screen;
+           background: linear-gradient(105deg, rgba(255,255,255,0) 35%, rgba(255,240,190,.9) 50%, rgba(255,255,255,0) 65%); }
+  #replay { position: fixed; right: 18px; bottom: 14px; width: 58px; height: 74px; padding: 0; border: 0; background: none;
+            cursor: pointer; opacity: 0; transition: opacity .6s, transform .2s; }
+  #replay.show { opacity: 1; }
+  #replay svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  #replay .glass { fill: #fff8d6; stroke: #8a7a3a; stroke-width: 2.5; transition: fill .25s, filter .25s; }
+  #replay .base { fill: #9aa0a6; }
+  #replay .fil { fill: none; stroke: #b08a1e; stroke-width: 2; stroke-linecap: round; }
+  #replay.show .glass { animation: glow 1.6s ease-out 1; }
+  #replay:hover, #replay:focus-visible { transform: scale(1.08); outline: none; }
+  #replay:hover .glass, #replay:focus-visible .glass { fill: #ffd83a; filter: drop-shadow(0 0 10px rgba(255,200,40,.95)); }
+  #replay:active { transform: scale(.95); }
+  #replay .tip { position: absolute; right: 64px; bottom: 26px; white-space: nowrap; font-size: 13px; color: #666;
+                 opacity: 0; transition: opacity .2s; pointer-events: none; }
+  #replay:hover .tip, #replay:focus-visible .tip { opacity: 1; }
+  @keyframes glow { 0% { fill: #fff8d6; } 30% { fill: #ffd83a; filter: drop-shadow(0 0 14px rgba(255,200,40,1)); } 100% { fill: #fff8d6; } }
+  .final img { opacity: 1 !important; }
 </style>
 </head>
 <body>
-  <img src="logo-v3.jpg" alt="Jazzy Ideas — jazzyideas.com">
+<div class="stage" id="stage" role="img" aria-label="Jazzy Ideas — jazzyideas.com"></div>
+<button id="replay" type="button" aria-label="Play the animation again" title="Play again">
+  <span class="tip">Play again</span>
+  <svg viewBox="0 0 60 78" aria-hidden="true">
+    <path class="glass" d="M30 3C15.6 3 5 13.6 5 27c0 9 4.6 15.2 9.3 20 3 3.1 4.7 6.6 4.7 10.5V60h22v-2.5c0-3.9 1.7-7.4 4.7-10.5C50.4 42.2 55 36 55 27 55 13.6 44.4 3 30 3z"/>
+    <path class="fil" d="M23 58V44l-4-9m18 23V44l4-9M19 35q5.5 6 11 0t11 0"/>
+    <rect class="base" x="18.5" y="61" width="23" height="5" rx="2"/>
+    <rect class="base" x="19.5" y="67" width="21" height="4.5" rx="2"/>
+    <path class="base" d="M24 73h12l-2.5 4h-7z"/>
+  </svg>
+</button>
+<script>
+const W = 1757, H = 1043;
+const P = {"s": {"x": 796, "y": 778, "w": 103, "h": 169}, "clarinet": {"x": 358, "y": 711, "w": 51, "h": 325}, "harp": {"x": 408, "y": 745, "w": 164, "h": 261}, "guitar": {"x": 788, "y": 83, "w": 965, "h": 799}, "stick_a1": {"x": 379, "y": 165, "w": 277, "h": 490}, "stick_a2": {"x": 217, "y": 188, "w": 331, "h": 429}, "stick_a3": {"x": 172, "y": 364, "w": 564, "h": 113}, "stick_z1a": {"x": 601, "y": 165, "w": 443, "h": 72}, "stick_z1b": {"x": 726, "y": 229, "w": 390, "h": 328}, "stick_z1c": {"x": 625, "y": 530, "w": 469, "h": 91}, "stick_z2a": {"x": 764, "y": 113, "w": 556, "h": 101}, "stick_z2b": {"x": 917, "y": 182, "w": 423, "h": 372}, "stick_z2c": {"x": 869, "y": 485, "w": 547, "h": 110}, "sax": {"x": 25, "y": 46, "w": 386, "h": 728}, "bell": {"x": 897, "y": 866, "w": 55, "h": 68}, "triangle": {"x": 648, "y": 778, "w": 166, "h": 186}, "keyboard": {"x": 569, "y": 770, "w": 106, "h": 200}, "maracas": {"x": 1268, "y": 776, "w": 132, "h": 166}, "horn": {"x": 917, "y": 688, "w": 209, "h": 284}, "gong": {"x": 1080, "y": 752, "w": 319, "h": 232}};
+// stacking order, bottom to top
+const ORDER = ["keyboard", "triangle", "horn", "gong", "maracas", "bell", "sax", "stick_a2", "stick_a1", "stick_a3", "stick_z1a", "stick_z1b", "stick_z1c",
+               "stick_z2a", "stick_z2b", "stick_z2c", "guitar", "harp", "clarinet", "s"];
+const STICKS = ORDER.filter(n => n.startsWith("stick"));
+const stage = document.getElementById("stage");
+const replay = document.getElementById("replay");
+const els = {};
+
+function place(el, p) {
+  el.style.left = (p.x / W * 100) + "%";  el.style.top = (p.y / H * 100) + "%";
+  el.style.width = (p.w / W * 100) + "%"; el.style.height = (p.h / H * 100) + "%";
+}
+ORDER.forEach((n, i) => {
+  const img = new Image(); img.src = "" + n + ".webp"; img.alt = ""; img.style.zIndex = i + 1;
+  place(img, P[n]); stage.appendChild(img); els[n] = img;
+});
+
+// "real instrument" look while flying: glossy, bright, glowing; settles into the collage look on landing
+const GLOW = "brightness(1.35) saturate(1.5) contrast(1.15) drop-shadow(0 0 18px rgba(255,205,90,.9))";
+const PLAIN = "brightness(1) saturate(1) contrast(1) drop-shadow(0 0 0 rgba(255,205,90,0))";
+const ease = "cubic-bezier(.22,.8,.25,1)";
+const rnd = (a, b) => a + Math.random() * (b - a);
+let running = [];
+
+function anim(el, frames, opts) { const a = el.animate(frames, Object.assign({ fill: "both" }, opts)); running.push(a); return a; }
+
+function shineOver(name, delay) {
+  const p = P[name], sh = document.createElement("div"); sh.className = "shine"; place(sh, p);
+  sh.style.zIndex = 50; sh.style.webkitMaskImage = sh.style.maskImage = `url(${name}.webp)`;
+  sh.style.webkitMaskSize = sh.style.maskSize = "100% 100%"; sh.style.backgroundSize = "300% 100%";
+  stage.appendChild(sh);
+  anim(sh, [{ opacity: 0, backgroundPosition: "100% 0" }, { opacity: 1, offset: .2 }, { opacity: 0, backgroundPosition: "0% 0" }],
+       { duration: 900, delay, easing: "ease-in-out" });
+}
+
+function play() {
+  running.forEach(a => a.cancel()); running = [];
+  stage.querySelectorAll(".burst,.spark,.shine").forEach(e => e.remove());
+  stage.classList.remove("final"); replay.classList.remove("show");
+
+  // saxophone: big real-looking sax twirls in from top-left and lands
+  anim(els.sax, [
+    { opacity: 0, transform: "translate(-70vw,-55vh) rotate(-1080deg) rotateY(0deg) scale(2.4)", filter: GLOW },
+    { opacity: 1, offset: .12 },
+    { transform: "translate(0,0) rotate(-25deg) rotateY(720deg) scale(1.18)", filter: GLOW, offset: .72 },
+    { transform: "rotate(6deg) scale(.96)", offset: .86 },
+    { opacity: 1, transform: "none", filter: PLAIN }
+  ], { duration: 2400, delay: 300, easing: ease });
+  shineOver("sax", 2600);
+
+  // drumsticks: tossed in one after another, spinning like a drum roll
+  STICKS.forEach((n, i) => {
+    const side = i % 4, dx = [-60, 60, rnd(-30, 30), rnd(-40, 40)][side], dy = [rnd(-40, 20), rnd(-40, 20), -70, 70][side];
+    const spin = (Math.random() < .5 ? -1 : 1) * rnd(900, 1500);
+    anim(els[n], [
+      { opacity: 0, transform: `translate(${dx}vw,${dy}vh) rotate(${spin}deg) scale(1.5)`, filter: GLOW },
+      { opacity: 1, offset: .15 },
+      { transform: `translate(0,0) rotate(${spin > 0 ? 12 : -12}deg) scale(1.05)`, offset: .8 },
+      { opacity: 1, transform: "none", filter: PLAIN }
+    ], { duration: 1050, delay: 2300 + i * 160, easing: ease });
+  });
+
+  // guitar: swings in from the right with a full spin, small wobble on landing
+  anim(els.guitar, [
+    { opacity: 0, transform: "translate(70vw,-35vh) rotate(540deg) rotateY(-360deg) scale(1.7)", filter: GLOW },
+    { opacity: 1, offset: .12 },
+    { transform: "translate(0,0) rotate(-10deg) rotateY(0deg) scale(1.06)", filter: GLOW, offset: .72 },
+    { transform: "rotate(4deg)", offset: .84 }, { transform: "rotate(-1.5deg)", offset: .93 },
+    { opacity: 1, transform: "none", filter: PLAIN }
+  ], { duration: 2000, delay: 3900, easing: ease });
+  shineOver("guitar", 5900);
+
+  // clarinet: drops from the top, twirling on its long axis
+  anim(els.clarinet, [
+    { opacity: 0, transform: "translateY(-110vh) rotate(-540deg) rotateY(1080deg) scale(1.8)", filter: GLOW },
+    { opacity: 1, offset: .12 },
+    { transform: "translateY(2%) rotate(0deg) rotateY(0deg) scale(1.05)", filter: GLOW, offset: .8 },
+    { opacity: 1, transform: "none", filter: PLAIN }
+  ], { duration: 1400, delay: 5400, easing: ease });
+
+  // harp: spirals up from the bottom-left
+  anim(els.harp, [
+    { opacity: 0, transform: "translate(-55vw,70vh) rotate(-900deg) scale(2.2)", filter: GLOW },
+    { opacity: 1, offset: .12 },
+    { transform: "translate(0,0) rotate(15deg) scale(1.1)", filter: GLOW, offset: .78 },
+    { opacity: 1, transform: "none", filter: PLAIN }
+  ], { duration: 1600, delay: 5800, easing: ease });
+  shineOver("harp", 7400);
+
+  // keyboard: slides in from the left, flipping end over end
+  anim(els.keyboard, [
+    { opacity: 0, transform: "translate(-60vw,10vh) rotate(-720deg) rotateX(540deg) scale(2)", filter: GLOW },
+    { opacity: 1, offset: .12 },
+    { transform: "translate(0,0) rotate(8deg) rotateX(0deg) scale(1.08)", filter: GLOW, offset: .8 },
+    { opacity: 1, transform: "none", filter: PLAIN }
+  ], { duration: 1400, delay: 6300, easing: ease });
+
+  // triangle: spins down from above and rings with a shiver
+  anim(els.triangle, [
+    { opacity: 0, transform: "translate(-10vw,-90vh) rotate(1080deg) scale(2.2)", filter: GLOW },
+    { opacity: 1, offset: .12 },
+    { transform: "translate(0,0) rotate(-8deg) scale(1.08)", filter: GLOW, offset: .72 },
+    { transform: "rotate(6deg)", offset: .8 }, { transform: "rotate(-4deg)", offset: .87 },
+    { transform: "rotate(2deg)", offset: .94 },
+    { opacity: 1, transform: "none", filter: PLAIN }
+  ], { duration: 1500, delay: 6700, easing: ease });
+
+  // blue bell: drops in and swings like it's ringing
+  els.bell.style.transformOrigin = "50% 0%";
+  anim(els.bell, [
+    { opacity: 0, transform: "translateY(-100vh) rotate(-720deg) scale(2.5)", filter: GLOW },
+    { opacity: 1, offset: .12 },
+    { transform: "translateY(0) rotate(30deg) scale(1.1)", filter: GLOW, offset: .6 },
+    { transform: "rotate(-24deg)", offset: .7 }, { transform: "rotate(16deg)", offset: .8 },
+    { transform: "rotate(-8deg)", offset: .9 },
+    { opacity: 1, transform: "none", filter: PLAIN }
+  ], { duration: 1700, delay: 7100, easing: ease });
+
+  // tuba / horn: twirls in from the top-right
+  anim(els.horn, [
+    { opacity: 0, transform: "translate(55vw,-70vh) rotate(900deg) rotateY(540deg) scale(2.3)", filter: GLOW },
+    { opacity: 1, offset: .12 },
+    { transform: "translate(0,0) rotate(-12deg) rotateY(0deg) scale(1.08)", filter: GLOW, offset: .78 },
+    { opacity: 1, transform: "none", filter: PLAIN }
+  ], { duration: 1600, delay: 7400, easing: ease });
+  shineOver("horn", 9000);
+
+  // gong: rolls in from the right like a wheel, then shimmers
+  anim(els.gong, [
+    { opacity: 0, transform: "translate(65vw,0) rotate(-1080deg) scale(1.6)", filter: GLOW },
+    { opacity: 1, offset: .1 },
+    { transform: "translate(0,0) rotate(10deg) scale(1.06)", filter: GLOW, offset: .78 },
+    { transform: "scale(1.04)", offset: .86 }, { transform: "scale(.98)", offset: .93 },
+    { opacity: 1, transform: "none", filter: PLAIN }
+  ], { duration: 1700, delay: 7800, easing: ease });
+  shineOver("gong", 9500);
+
+  // maracas: tossed up from below, land with a shake-shake
+  anim(els.maracas, [
+    { opacity: 0, transform: "translate(25vw,80vh) rotate(-900deg) scale(2.2)", filter: GLOW },
+    { opacity: 1, offset: .12 },
+    { transform: "translate(0,0) rotate(0deg) scale(1.08)", filter: GLOW, offset: .66 },
+    { transform: "translate(-1.2%,0) rotate(-7deg)", offset: .72 }, { transform: "translate(1.2%,0) rotate(7deg)", offset: .78 },
+    { transform: "translate(-1%,0) rotate(-6deg)", offset: .84 }, { transform: "translate(1%,0) rotate(5deg)", offset: .9 },
+    { opacity: 1, transform: "none", filter: PLAIN }
+  ], { duration: 1900, delay: 8200, easing: ease });
+
+  // S: a giant glowing purple S crashes in with a lightning flash and sparks
+  const s = P.s, cx = s.x + s.w / 2, cy = s.y + s.h / 2, R = 420;
+  const burst = document.createElement("div"); burst.className = "burst"; burst.style.zIndex = 40;
+  place(burst, { x: cx - R, y: cy - R, w: 2 * R, h: 2 * R }); stage.appendChild(burst);
+  const SD = 9300;
+  anim(els.s, [
+    { opacity: 0, transform: "scale(9) rotate(-25deg)", filter: "brightness(2.2) drop-shadow(0 0 30px #a070ff)" },
+    { opacity: 1, offset: .2 },
+    { transform: "scale(.78) rotate(4deg)", filter: "brightness(1.6) drop-shadow(0 0 22px #a070ff)", offset: .62 },
+    { transform: "scale(1.18)", offset: .8 },
+    { opacity: 1, transform: "none", filter: "brightness(1) drop-shadow(0 0 0 #a070ff)" }
+  ], { duration: 1300, delay: SD, easing: ease });
+  anim(burst, [{ opacity: 0, transform: "scale(.1)" }, { opacity: 1, transform: "scale(.6)", offset: .25 }, { opacity: 0, transform: "scale(1.15)" }],
+       { duration: 900, delay: SD + 700, easing: "ease-out" });
+  for (let k = 0; k < 14; k++) {
+    const sp = document.createElement("div"); sp.className = "spark"; sp.style.zIndex = 45;
+    sp.style.left = (cx / W * 100) + "%"; sp.style.top = (cy / H * 100) + "%"; stage.appendChild(sp);
+    const a = k / 14 * Math.PI * 2 + rnd(-.2, .2), d = rnd(4, 11);
+    anim(sp, [{ opacity: 0, transform: "translate(-50%,-50%) scale(1)" }, { opacity: 1, offset: .02 },
+              { opacity: 0, transform: `translate(calc(-50% + ${Math.cos(a) * d}vw), calc(-50% + ${Math.sin(a) * d}vw)) scale(.3)` }],
+         { duration: rnd(700, 1100), delay: SD + 750, easing: "ease-out" });
+  }
+
+  setTimeout(() => replay.classList.add("show"), SD + 1800);
+}
+
+replay.addEventListener("click", play);
+const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+if (reduce) { stage.classList.add("final"); replay.classList.add("show"); }
+else {
+  // start once every layer has loaded so nothing pops in mid-flight
+  Promise.all(Object.values(els).map(i => i.decode ? i.decode().catch(() => {}) : Promise.resolve())).then(play);
+}
+</script>
 </body>
 </html>
